@@ -1,0 +1,38 @@
+{
+  "identity": [
+    {
+      "path": "***\\Users\\User\\AppData\\Local\\Temp#hash",
+      "normalized_path": "***\\users\\user\\appdata\\local\\temp#hash",
+      "category": "temp",
+      "ext": ".log",
+      "size": 1024,
+      "mtime": 1690000000,
+      "ctime": 1680000000,
+      "risk_context": {
+        "rule_risk": "low",
+        "is_suggestion_only": false
+      }
+    }
+  ],
+  "clusters": [
+    {
+      "path_pattern": "***\\Users\\User\\AppData\\Local\\Temp#hash",
+      "size": 10240,
+      "count": 12,
+      "samples": ["***\\Users\\User\\AppData\\Local\\Temp\\a.tmp#hash"]
+    }
+  ],
+  "analysis_stats": {
+    "ext_breakdown": {".log": {"size": 1024, "count": 1}},
+    "folder_breakdown": {"C:\\Temp": {"size": 1024, "count": 1}},
+    "category_breakdown": {"temp": {"size": 1024, "count": 1}},
+    "top_files": [],
+    "top_folders": []
+  },
+  "user_intent": {
+    "mode": "balanced",
+    "allow_auto_level": "L1",
+    "thresholds": {"large_file_mb": 500}
+  },
+  "meta": {"masked": true, "total_items": 100}
+}
