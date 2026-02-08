@@ -1,0 +1,42 @@
+{
+  "advice": {
+    "summary": {
+      "estimated_savings_bytes": 123456,
+      "level_counts": {"L1": 10, "L2": 5, "L3": 2, "L4": 1, "L5": 3},
+      "key_risks": ["涉及系统目录"]
+    },
+    "items": [
+      {
+        "target": "***\\Users\\User\\AppData\\Local\\Temp#hash",
+        "level": "L1",
+        "confidence": 0.92,
+        "reason": "临时缓存文件",
+        "risk_notes": "低风险",
+        "recommended_action": "删除",
+        "requires_confirmation": false,
+        "estimated_savings_bytes": 10240
+      }
+    ]
+  },
+  "report": {
+    "overview": "概览文本",
+    "breakdown": {
+      "by_extension": [],
+      "by_top_directories": [],
+      "by_app_or_owner_guess": [],
+      "by_cache_type": [],
+      "by_user_data_type": []
+    },
+    "findings": {
+      "quick_wins": [],
+      "medium_risks": [],
+      "do_not_touch": [],
+      "anomalies": []
+    },
+    "recommendations": {
+      "cleanup_strategy": [],
+      "non_delete_options": []
+    },
+    "disclaimers": "示例免责声明"
+  }
+}
