@@ -9,7 +9,7 @@ from ui.main_window import MainWindow
 def main() -> int:
     app = QApplication(sys.argv)
     window = MainWindow()
-    window.resize(1200, 800)
+    window.setFixedSize(1200, 800)
     window.show()
     return app.exec()
 

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Dict
 
 
 def get_runtime_dir() -> Path:
-    runtime = Path(__file__).resolve().parents[1] / "data" / "runtime"
+    local_appdata = os.environ.get("LOCALAPPDATA")
+    base_dir = Path(local_appdata) if local_appdata else (Path.home() / "AppData" / "Local")
+    runtime = base_dir / "new-c" / "runtime"
     runtime.mkdir(parents=True, exist_ok=True)
     return runtime
 

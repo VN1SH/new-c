@@ -11,9 +11,9 @@ def export_ai_report_html(report: Dict, path: Path) -> None:
         sections.append(f"<h2>{key}</h2><pre>{json.dumps(value, ensure_ascii=False, indent=2)}</pre>")
     html = """
     <html>
-    <head><meta charset="utf-8"><title>AI C盘盘点报告</title></head>
+    <head><meta charset="utf-8"><title>AI 磁盘分析报告</title></head>
     <body>
-    <h1>AI C盘盘点报告</h1>
+    <h1>AI 磁盘分析报告</h1>
     {content}
     </body>
     </html>

@@ -9,10 +9,9 @@ from core.scanner import ScanItem
 
 
 class PayloadBuilder:
-    def __init__(self, mask_paths: bool = True, max_items: int = 200, max_sample_paths: int = 20):
+    def __init__(self, mask_paths: bool = False, max_items: int = 5000):
         self.mask_paths = mask_paths
         self.max_items = max_items
-        self.max_sample_paths = max_sample_paths
 
     def _mask_path(self, path: str) -> str:
         if not self.mask_paths:
@@ -22,58 +21,59 @@ class PayloadBuilder:
         return f"***\\{tail}#{hashed}"
 
     def build(self, items: List[ScanItem], stats_summary: Dict, user_intent: Dict) -> Dict:
-        items_sorted = sorted(items, key=lambda x: x.size_bytes, reverse=True)[: self.max_items]
+        index_by_object_id = {id(item): idx for idx, item in enumerate(items)}
+        items_limited = items[: self.max_items]
+
         payload_items = []
-        for item in items_sorted:
+        for item in items_limited:
+            item_id = index_by_object_id.get(id(item), -1)
             payload_items.append(
                 {
+                    "item_id": item_id,
+                    "file_name": Path(item.path).name,
                     "path": self._mask_path(item.path),
-                    "normalized_path": self._mask_path(item.path.lower()),
                     "category": item.category,
                     "ext": Path(item.path).suffix.lower(),
-                    "size": item.size_bytes,
-                    "mtime": item.mtime,
-                    "ctime": item.ctime,
+                    "size_bytes": int(item.size_bytes),
+                    "modified_time": int(item.mtime),
                     "risk_context": {
                         "rule_risk": item.rule_risk,
+                        "is_recent": item.is_recent,
                         "is_suggestion_only": item.is_suggestion_only,
                     },
                 }
             )
 
-        clusters = self._build_clusters(items_sorted)
         payload = {
             "identity": payload_items,
-            "clusters": clusters,
             "analysis_stats": stats_summary,
             "user_intent": user_intent,
-            "meta": {"masked": self.mask_paths, "total_items": len(items)},
+            "meta": {
+                "masked": self.mask_paths,
+                "total_items": len(items),
+                "payload_items": len(payload_items),
+                "rating_levels": ["L1", "L2", "L3", "L4", "L5"],
+            },
         }
         return self._auto_trim(payload)
 
-    def _build_clusters(self, items: List[ScanItem]) -> List[Dict]:
-        clusters: Dict[str, Dict] = {}
-        for item in items:
-            key = str(Path(item.path).parent)
-            if key not in clusters:
-                clusters[key] = {"path_pattern": self._mask_path(key), "size": 0, "count": 0, "samples": []}
-            clusters[key]["size"] += item.size_bytes
-            clusters[key]["count"] += 1
-            if len(clusters[key]["samples"]) < self.max_sample_paths:
-                clusters[key]["samples"].append(self._mask_path(item.path))
-        return list(clusters.values())
-
     def _auto_trim(self, payload: Dict) -> Dict:
         serialized = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-        if len(serialized) <= 300_000:
+        if len(serialized) <= 450_000:
             return payload
-        for cluster in payload.get("clusters", []):
-            if "samples" in cluster:
-                cluster["samples"] = cluster["samples"][: max(5, self.max_sample_paths // 2)]
+
+        # Keep full file list as much as possible; trim heavy stats first.
+        if "analysis_stats" in payload:
+            payload["analysis_stats"] = {
+                "category_breakdown": payload.get("analysis_stats", {}).get("category_breakdown", {}),
+            }
         serialized = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-        if len(serialized) <= 300_000:
+        if len(serialized) <= 450_000:
             return payload
-        payload["identity"] = payload.get("identity", [])[: max(50, self.max_items // 2)]
+
+        identity = payload.get("identity", [])
+        if isinstance(identity, list):
+            payload["identity"] = identity[: max(200, len(identity) // 2)]
         return payload
 
     @staticmethod

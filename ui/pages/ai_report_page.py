@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
+
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton
+from PySide6.QtWidgets import QPushButton, QTextEdit, QVBoxLayout, QWidget
 
 
 class AIReportPage(QWidget):
@@ -14,9 +16,12 @@ class AIReportPage(QWidget):
         self.report_view.setReadOnly(True)
         layout.addWidget(self.report_view)
 
-        self.export_button = QPushButton("导出 AI 报告 HTML")
+        self.export_button = QPushButton("导出 AI 报告（HTML）")
         layout.addWidget(self.export_button)
         self.export_button.clicked.connect(self.request_export.emit)
 
     def update_report(self, report: dict) -> None:
-        self.report_view.setText(str(report))
+        if isinstance(report, dict):
+            self.report_view.setPlainText(json.dumps(report, ensure_ascii=False, indent=2))
+        else:
+            self.report_view.setPlainText(str(report))

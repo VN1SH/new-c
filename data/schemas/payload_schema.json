@@ -1,25 +1,18 @@
 {
   "identity": [
     {
+      "item_id": 12,
+      "file_name": "a.tmp",
       "path": "***\\Users\\User\\AppData\\Local\\Temp#hash",
-      "normalized_path": "***\\users\\user\\appdata\\local\\temp#hash",
       "category": "temp",
       "ext": ".log",
-      "size": 1024,
-      "mtime": 1690000000,
-      "ctime": 1680000000,
+      "size_bytes": 1024,
+      "modified_time": 1738795631,
       "risk_context": {
         "rule_risk": "low",
+        "is_recent": false,
         "is_suggestion_only": false
       }
-    }
-  ],
-  "clusters": [
-    {
-      "path_pattern": "***\\Users\\User\\AppData\\Local\\Temp#hash",
-      "size": 10240,
-      "count": 12,
-      "samples": ["***\\Users\\User\\AppData\\Local\\Temp\\a.tmp#hash"]
     }
   ],
   "analysis_stats": {
@@ -32,7 +25,8 @@
   "user_intent": {
     "mode": "balanced",
     "allow_auto_level": "L1",
-    "thresholds": {"large_file_mb": 500}
+    "rating_policy": "five_level_only",
+    "required_fields": ["file_name", "path", "level", "reason", "recommended_action"]
   },
-  "meta": {"masked": true, "total_items": 100}
+  "meta": {"masked": true, "total_items": 100, "payload_items": 100, "rating_levels": ["L1", "L2", "L3", "L4", "L5"]}
 }
